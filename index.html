@@ -7,6 +7,7 @@
   <title>Mis Alquileres</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="payments.css">
+  <link rel="stylesheet" href="status.css">
 </head>
 <body>
   <header class="topbar">
@@ -21,8 +22,9 @@
     </section>
 
     <section class="stats" aria-label="Resumen de pagos">
-      <button class="stat pending" data-filter="pendiente"><span>⚠️</span><div><strong id="pendingCount">0</strong><small>Faltan pagar</small></div><b>Ver personas →</b></button>
-      <button class="stat paid" data-filter="pagado"><span>✓</span><div><strong id="paidCount">0</strong><small>Ya pagaron</small></div><b>Ver personas →</b></button>
+      <button class="stat pending" data-filter="vencido"><span>⚠️</span><div><strong id="overdueCount">0</strong><small>Vencidos sin pagar</small></div><b>Ver personas →</b></button>
+      <button class="stat upcoming" data-filter="a_tiempo"><span>🕐</span><div><strong id="upcomingCount">0</strong><small>Aún están a tiempo</small></div><b>Ver personas →</b></button>
+      <button class="stat paid" data-filter="pagado"><span>✓</span><div><strong id="paidCount">0</strong><small>Ya pagaron este mes</small></div><b>Ver personas →</b></button>
       <button class="stat total" data-filter="todos"><span>🏪</span><div><strong id="tenantCount">0</strong><small>Locales alquilados</small></div><b>Ver todos →</b></button>
       <div class="stat money"><span>S/</span><div><strong id="collected">0.00</strong><small>Cobrado este mes</small></div></div>
     </section>
@@ -34,11 +36,12 @@
       </div>
       <div class="filters">
         <button class="chip active" data-filter="todos">Todos</button>
-        <button class="chip" data-filter="pendiente">Faltan pagar</button>
-        <button class="chip" data-filter="pagado">Pagaron</button>
+        <button class="chip" data-filter="vencido">Vencidos sin pagar</button>
+        <button class="chip" data-filter="a_tiempo">Aún están a tiempo</button>
+        <button class="chip" data-filter="pagado">Ya pagaron</button>
       </div>
       <div class="table-wrap">
-        <table><thead><tr><th>Cliente y contacto</th><th>Local</th><th>Alquiler</th><th>Vence</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="tenantRows"></tbody></table>
+        <table><thead><tr><th>Cliente y contacto</th><th>Local</th><th>Alquiler</th><th>Fecha límite de pago</th><th>Estado de este mes</th><th>Acción</th></tr></thead><tbody id="tenantRows"></tbody></table>
         <div class="empty" id="emptyState" hidden><span>🔎</span><h3>No encontramos resultados</h3><p>Pruebe con otro nombre, número o estado.</p></div>
       </div>
     </section>

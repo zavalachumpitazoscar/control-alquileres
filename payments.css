@@ -31,3 +31,6 @@
   cursor: pointer;
   white-space: nowrap;
 }
+
+.receipt-link{display:inline-flex;align-items:center;justify-content:center;background:#184f43;color:#fff;text-decoration:none;border-radius:9px;padding:9px 12px;font-weight:800;white-space:nowrap}
+.receipt-name{display:block;color:#677773;margin-top:6px;max-width:190px;overflow-wrap:anywhere}

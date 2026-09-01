@@ -6,18 +6,21 @@ const sample=[
 ];
 let tenants=JSON.parse(localStorage.getItem(KEY)||'null')||sample, filter='todos';
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-function currentMonth(){return new Date().toISOString().slice(0,7)} function todayISO(){return new Date().toISOString().slice(0,10)}
+function currentMonth(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`} function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function money(n){return Number(n||0).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function paid(t){return (t.payments||[]).some(p=>p.month===currentMonth())}
+function dueDate(t){const now=new Date(),last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();return new Date(now.getFullYear(),now.getMonth(),Math.min(Number(t.dueDay)||1,last))}
+function paymentStatus(t){if(paid(t))return 'pagado';const today=new Date();today.setHours(0,0,0,0);return today>dueDate(t)?'vencido':'a_tiempo'}
+function dueDateText(t){return new Intl.DateTimeFormat('es-PE',{day:'numeric',month:'long',year:'numeric'}).format(dueDate(t))}
 function save(){localStorage.setItem(KEY,JSON.stringify(tenants));render()}
 function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function render(){
  const q=$('#search').value.trim().toLowerCase();
- const rows=tenants.filter(t=>(filter==='todos'||(filter==='pagado')===paid(t))&&[t.name,t.dni,t.phone,t.local].join(' ').toLowerCase().includes(q));
- $('#pendingCount').textContent=tenants.filter(t=>!paid(t)).length; $('#paidCount').textContent=tenants.filter(paid).length; $('#tenantCount').textContent=tenants.length;
+ const rows=tenants.filter(t=>(filter==='todos'||paymentStatus(t)===filter)&&[t.name,t.dni,t.phone,t.local].join(' ').toLowerCase().includes(q));
+ $('#overdueCount').textContent=tenants.filter(t=>paymentStatus(t)==='vencido').length; $('#upcomingCount').textContent=tenants.filter(t=>paymentStatus(t)==='a_tiempo').length; $('#paidCount').textContent=tenants.filter(paid).length; $('#tenantCount').textContent=tenants.length;
  $('#collected').textContent=money(tenants.flatMap(t=>t.payments||[]).filter(p=>p.month===currentMonth()).reduce((s,p)=>s+Number(p.amount),0));
- $('#listTitle').textContent=filter==='pendiente'?'Clientes que faltan pagar':filter==='pagado'?'Clientes que ya pagaron':'Todos los clientes';
- $('#tenantRows').innerHTML=rows.map(t=>`<tr><td class="person"><strong>${esc(t.name)}</strong><small>📞 ${esc(t.phone)}${t.dni?' · DNI '+esc(t.dni):''}</small></td><td>${esc(t.local)}</td><td class="amount">S/ ${money(t.rent)}</td><td>Día ${t.dueDay}</td><td><span class="badge ${paid(t)?'paid':'pending'}">${paid(t)?'✓ Pagado':'⚠ Pendiente'}</span></td><td><div class="row-actions">${!paid(t)?`<button class="pay" onclick="openPayment('${t.id}')">Registrar pago</button>`:''}<button onclick="openDetail('${t.id}')">Ver</button></div></td></tr>`).join('');
+ $('#listTitle').textContent=filter==='vencido'?'Clientes vencidos que no pagaron':filter==='a_tiempo'?'Clientes que aún están a tiempo':filter==='pagado'?'Clientes que ya pagaron este mes':'Todos los clientes';
+ $('#tenantRows').innerHTML=rows.map(t=>{const status=paymentStatus(t),label=status==='pagado'?'✓ Pagó este mes':status==='vencido'?'⚠ Vencido sin pagar':'🕐 Aún está a tiempo';return `<tr><td class="person"><strong>${esc(t.name)}</strong><small>📞 ${esc(t.phone)}${t.dni?' · DNI '+esc(t.dni):''}</small></td><td>${esc(t.local)}</td><td class="amount">S/ ${money(t.rent)}</td><td><b>${dueDateText(t)}</b></td><td><span class="badge ${status}">${label}</span></td><td><div class="row-actions">${!paid(t)?`<button class="pay" onclick="openPayment('${t.id}')">Registrar pago</button>`:''}<button onclick="openDetail('${t.id}')">Ver</button></div></td></tr>`}).join('');
  $('#emptyState').hidden=rows.length>0;
 }
 function setFilter(v){filter=v;$$('.chip').forEach(b=>b.classList.toggle('active',b.dataset.filter===v));render();$('#listTitle').scrollIntoView({behavior:'smooth',block:'start'})}

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#184f43">
+  <title>Mis Alquileres</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon">🏠</span><div><strong>Mis Alquileres</strong><small>Control de locales y pagos</small></div></div>
+    <button class="help" id="helpBtn">? <span>Ayuda</span></button>
+  </header>
+
+  <main>
+    <section class="welcome">
+      <div><p class="eyebrow" id="today"></p><h1>Resumen de este mes</h1><p>Revise rápidamente quién pagó y quién tiene un pago pendiente.</p></div>
+      <button class="primary" id="newTenantBtn">＋ Registrar cliente</button>
+    </section>
+
+    <section class="stats" aria-label="Resumen de pagos">
+      <button class="stat pending" data-filter="pendiente"><span>⚠️</span><div><strong id="pendingCount">0</strong><small>Faltan pagar</small></div><b>Ver personas →</b></button>
+      <button class="stat paid" data-filter="pagado"><span>✓</span><div><strong id="paidCount">0</strong><small>Ya pagaron</small></div><b>Ver personas →</b></button>
+      <button class="stat total" data-filter="todos"><span>🏪</span><div><strong id="tenantCount">0</strong><small>Locales alquilados</small></div><b>Ver todos →</b></button>
+      <div class="stat money"><span>S/</span><div><strong id="collected">0.00</strong><small>Cobrado este mes</small></div></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div><h2 id="listTitle">Todos los clientes</h2><p id="listSubtitle">Seleccione un cliente para ver sus datos o registrar un pago.</p></div>
+        <div class="search"><span>⌕</span><input id="search" placeholder="Buscar por cliente, local, DNI o teléfono" autocomplete="off"></div>
+      </div>
+      <div class="filters">
+        <button class="chip active" data-filter="todos">Todos</button>
+        <button class="chip" data-filter="pendiente">Faltan pagar</button>
+        <button class="chip" data-filter="pagado">Pagaron</button>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Cliente y contacto</th><th>Local</th><th>Alquiler</th><th>Vence</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="tenantRows"></tbody></table>
+        <div class="empty" id="emptyState" hidden><span>🔎</span><h3>No encontramos resultados</h3><p>Pruebe con otro nombre, número o estado.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="tenantDialog"><form method="dialog" id="tenantForm"><div class="modal-head"><div><h2 id="tenantDialogTitle">Registrar nuevo cliente</h2><p>Complete solo los datos importantes.</p></div><button class="close" value="cancel">×</button></div><input type="hidden" id="tenantId"><div class="form-grid"><label>Nombre completo *<input id="name" required></label><label>DNI o documento<input id="dni" inputmode="numeric"></label><label>Teléfono *<input id="phone" required inputmode="tel"></label><label>Nombre o número del local *<input id="local" required></label><label>Alquiler mensual (S/) *<input id="rent" required type="number" min="0" step="0.01"></label><label>Día límite de pago *<input id="dueDay" required type="number" min="1" max="31" value="5"></label><label class="wide">Observaciones<textarea id="notes" rows="2" placeholder="Ejemplo: paga por transferencia"></textarea></label></div><div class="actions"><button value="cancel" class="secondary">Cancelar</button><button value="default" class="primary" id="saveTenant">Guardar cliente</button></div></form></dialog>
+
+  <dialog id="paymentDialog"><form method="dialog" id="paymentForm"><div class="modal-head"><div><h2>Registrar pago</h2><p id="paymentClient"></p></div><button class="close" value="cancel">×</button></div><input type="hidden" id="paymentTenantId"><div class="form-grid"><label>Mes pagado *<input id="paymentMonth" type="month" required></label><label>Monto recibido (S/) *<input id="amount" type="number" min="0" step="0.01" required></label><label>Fecha del pago *<input id="paymentDate" type="date" required></label><label>Forma de pago<select id="paymentMethod"><option>Efectivo</option><option>Yape</option><option>Plin</option><option>Transferencia</option><option>Depósito</option></select></label><label class="wide">Comprobante (foto o PDF)<input id="receipt" type="file" accept="image/*,.pdf"><small>En esta demostración se guarda el nombre. Firebase guardará el archivo.</small></label><label class="wide">Nota<textarea id="paymentNote" rows="2"></textarea></label></div><div class="actions"><button value="cancel" class="secondary">Cancelar</button><button value="default" class="primary">✓ Confirmar pago</button></div></form></dialog>
+
+  <dialog id="detailDialog"><div id="detailContent"></div></dialog>
+  <dialog id="helpDialog"><div class="modal-head"><div><h2>Ayuda rápida</h2><p>Este sistema está pensado para usarse sin complicaciones.</p></div><button class="close" onclick="helpDialog.close()">×</button></div><ol class="help-list"><li><b>Registre al cliente</b> con su local, teléfono y alquiler.</li><li>Entre a <b>Faltan pagar</b> para ver solo los pendientes.</li><li>Presione <b>Registrar pago</b> y complete la fecha y monto.</li><li>Use el buscador para encontrar rápidamente cualquier persona.</li></ol><button class="primary full" onclick="helpDialog.close()">Entendido</button></dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

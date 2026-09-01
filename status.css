@@ -1,0 +1,26 @@
+.stats {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.stat.upcoming > span {
+  background: #fff5df;
+  color: #a85e0a;
+}
+
+.badge.vencido {
+  color: #b93b3b;
+  background: #fff0ef;
+}
+
+.badge.a_tiempo {
+  color: #8a520d;
+  background: #fff5df;
+}
+
+@media (max-width: 1050px) {
+  .stats { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 620px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}

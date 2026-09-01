@@ -14,3 +14,20 @@
   cursor: pointer;
   white-space: nowrap;
 }
+
+.payment-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.delete-payment {
+  border: 1px solid #b93b3b;
+  background: #fff0ef;
+  color: #b93b3b;
+  border-radius: 9px;
+  padding: 8px 10px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}

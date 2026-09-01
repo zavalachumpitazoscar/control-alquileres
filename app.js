@@ -14,6 +14,8 @@ function paymentStatus(t){if(paid(t))return 'pagado';const today=new Date();toda
 function dueDateText(t){return new Intl.DateTimeFormat('es-PE',{day:'numeric',month:'long',year:'numeric'}).format(dueDate(t))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(tenants))}catch(error){alert('El comprobante es demasiado pesado para esta versión. Seleccione una imagen o PDF de máximo 2 MB.');throw error}render()}
 function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function readFileAsDataURL(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(file)})}
+function receiptHtml(p){const url=p.receiptData||p.receiptUrl||'';if(url)return `<a class="receipt-link" href="${esc(url)}" target="_blank" rel="noopener">👁 Abrir comprobante</a><small class="receipt-name">${esc(p.receipt||'Comprobante guardado')}</small>`;return `<span>${esc(p.receipt||'Sin comprobante')}</span><small class="payment-note">${p.receipt?'Vuelva a adjuntar este archivo para poder abrirlo.':'Sin comprobante'}</small>`}
 function render(){
  const q=$('#search').value.trim().toLowerCase();
  const rows=tenants.filter(t=>(filter==='todos'||paymentStatus(t)===filter)&&[t.name,t.dni,t.phone,t.local].join(' ').toLowerCase().includes(q));
